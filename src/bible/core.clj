@@ -50,9 +50,9 @@
 (def nt (load-all-data))
 
 (defn get-verse [{:keys [book chapter verse]}]
-  (let [data (nt (keyword book))
-        chapter-data (data (keyword (str chapter)))]
-    (chapter-data (keyword (str verse)))))
+  (get-in nt [(keyword book)
+              (keyword (str chapter))
+              (keyword (str verse))]))
 
 (defn get-verse-preview [verse]
   (join " " (map #(% :word) verse)))
