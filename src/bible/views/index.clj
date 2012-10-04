@@ -2,14 +2,10 @@
   (:require [bible.views.common :as common])
   (:use [noir.core :only [defpage]]
         [cheshire.core]
-        [bible.core :only [get-verse get-verse-preview books]]))
+        [bible.core :only [get-verse get-verse-preview books make-select]]))
 
 (def form [:form {:method "get"}
-           [:select {:name "book"}
-             (map
-               (fn [name k] [:option {:value k} name])
-               (keys books)
-               (vals books))]
+           (make-select)
             [:input {:type "text" :name "chapter"}]
             [:input {:type "text" :name "verse"}]
             [:input {:type "submit"}]])
@@ -20,7 +16,6 @@
       form
       [:p (get-verse-preview
             (get-verse {:book book :chapter chapter :verse verse}))]]))
-
 
 (defpage [:get "/api/:book/:chapter/:verse"] {:keys [book chapter verse]}
   (generate-string

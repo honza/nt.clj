@@ -1,9 +1,8 @@
 (ns bible.core
   (:use
     [cheshire.core]
+    [clojure.tools.logging]
     [clojure.string :only [join]]))
-
-(def bible-files "books/")
 
 (def books {
     "Matthew" "matthew"
@@ -34,12 +33,27 @@
     "Jude" "jude"
     "Revelation" "revelation"})
 
-(defn load-bible-file [filename]
-  (parse-string (slurp (str bible-files filename)) true))
+(def book-order ["Matthew" "Mark" "Luke" "John" "Acts" "Romans"
+                 "1 Corinthians" "2 Corinthians" "Galatians" "Ephesians"
+                 "Phillipians" "Colossians" "1 Thessalonians"
+                 "2 Thessalonians" "1 Timothy" "2 Timothy" "Titus" "Philemon"
+                 "Hebrews" "James" "1 Peter" "2 Peter" "1 John" "2 John"
+                 "3 John" "Jude" "Revelation"])
 
-(defn load-all-data []
+(defn make-select []
+  [:select {:name "book"}
+    (map
+      (fn [name] [:option {:value (books name)} name])
+      book-order)])
+
+(defn load-bible-file [filename]
+  (parse-string (slurp (str "books/" filename)) true))
+
+(defn load-all-data
   "Create a map of books to their data
     {'romans' {:1 ...}}"
+  []
+  (info "Loading bible data")
   (let [filenames (map #(str % ".json") (vals books))]
     (into {}
       (map
@@ -55,4 +69,6 @@
               (keyword (str verse))]))
 
 (defn get-verse-preview [verse]
-  (join " " (map #(% :word) verse)))
+  (when (nil? verse)
+    (join " " (map #(% :word) verse))
+    "Verse not found."))
