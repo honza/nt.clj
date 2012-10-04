@@ -69,6 +69,6 @@
               (keyword (str verse))]))
 
 (defn get-verse-preview [verse]
-  (when (nil? verse)
-    (join " " (map #(% :word) verse))
-    "Verse not found."))
+  (if (empty? verse)
+    "Verse not found."
+    (join " " (map #(% :word) verse))))
